@@ -270,6 +270,9 @@ pygame.display.set_caption('Dungeon Game')
 #initialize clock
 clock = pygame.time.Clock()
 
+#set the fps
+frames_per_second = 60
+
 
 # def monsters(thingx, thingy, thingw, thingh, color):
 #     pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingw, thingh])
@@ -339,21 +342,25 @@ def game_intro():
         clock.tick(15)
 
 def game_loop():
-    #set the fps
-    frames_per_second = 60
-
     #initialize the player
+    active_object_list = pygame.sprite.Group()
     player = Player()
 
     #character starting position
-    x = 40
-    y = 40
+    x = 500
+    y = 500
     player.set_position(x, y)
+    active_object_list.add( player )
 
     #TODO: add in functionality to deal with multiple levels
     #just going to use level 0 as our default
-    current_level = Level_00(player)
-    player.set_level(current_level)
+    level_list = []
+    level_list.append( Level_00( player ) )
+
+    current_level_number = 0
+    current_level = level_list [ current_level_number ]
+
+    player.set_level( current_level )
 
     #variables for controllign the sprite
     # x_change = 0
@@ -379,28 +386,28 @@ def game_loop():
                 gameExit = False
 
 
-            # Update Functions
-            player.update ( current_level.object_list, event )
-            event = None
+        # Update Functions
+        player.update ( current_level.object_list, event )
+        event = None
 
-            current_level.update()
-
-
-            #Logic Testing
-            current_level.run_viewbox()
+        current_level.update()
 
 
-            #Draw Everything
-            current_level.draw( gameDisplay )
-            #active_object_list.draw( gameDisplay ) TODO: figure this out
+        #Logic Testing
+        current_level.run_viewbox()
 
 
-            #Delay Framerate
-            clock.tick( frames_per_second )
+        #Draw Everything
+        current_level.draw( gameDisplay )
+        active_object_list.draw( gameDisplay )
 
-            #Update Everything
-            #pygame.display.flip()  --> always just updates entire surface
-            pygame.display.update() #can use an argument to update small things
+
+        #Delay Framerate
+        clock.tick( frames_per_second )
+
+        #Update Everything
+        #pygame.display.flip()  --> always just updates entire surface
+        pygame.display.update() #can use an argument to update small things
 
 
 #run the start screen
