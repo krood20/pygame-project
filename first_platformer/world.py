@@ -47,7 +47,7 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     for platform in to_draw:
-                        print'['+str(platform).split('(')[1].split(')')[0]+', black],'
+                        print('['+str(platform).split('(')[1].split(')')[0]+', black],')
 
                 if event.key == pygame.K_BACKSPACE:
                     to_draw.pop()

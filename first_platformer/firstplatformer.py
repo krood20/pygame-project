@@ -14,9 +14,9 @@ class Player( pygame.sprite.Sprite ):
 
         #self.image = pygame.Surface(( width, height))
         #self.image.fill( color )
-        
+
         self.image = pygame.image.load("btjump.gif").convert()
-        
+
         self.set_properties()
 
         self.hspeed = 0
@@ -26,7 +26,7 @@ class Player( pygame.sprite.Sprite ):
 
     #setting properties; origin
     def set_properties( self ):
-        
+
         self.rect = self.image.get_rect()
         self.origin_x = self.rect.centerx
         self.origin_y = self.rect.centery
@@ -60,7 +60,7 @@ class Player( pygame.sprite.Sprite ):
             elif ( self.hspeed < 0 ):
                 #left direction
                 self.rect.left = collided_object.rect.right
-                
+
         self.rect.y += self.vspeed
 
         collision_list = pygame.sprite.spritecollide( self, collidable, False )
@@ -70,7 +70,7 @@ class Player( pygame.sprite.Sprite ):
                 #Down direction
                 self.rect.bottom = collided_object.rect.top
                 self.vspeed = 0
-                
+
             elif ( self.vspeed < 0 ):
                 #Up direction
                 self.rect.top = collided_object.rect.bottom
@@ -80,14 +80,14 @@ class Player( pygame.sprite.Sprite ):
             if ( event.type == pygame.KEYDOWN ):
                 if ( event.key == pygame.K_LEFT ):
                     self.hspeed = -self.speed
-                    
+
                 if ( event.key == pygame.K_RIGHT ):
                     self.hspeed = self.speed
-                #makes sure block only jumps once  
+                #makes sure block only jumps once
                 if ( event.key == pygame.K_UP ):
                     if ( len(collision_list) == 1 ):
                         self.vspeed = -( self.speed )*2
-                    
+
             if ( event.type == pygame.KEYUP ):
                 if ( event.key == pygame.K_LEFT ):
                     if ( self.hspeed < 0 ): self.hspeed = 0
@@ -103,7 +103,7 @@ class Player( pygame.sprite.Sprite ):
                     #if ( self.vspeed != 0 ): self.vspeed = 0
                     #comment this out if you want box to jump full height each time
                     pass
-                
+
 
     def experience_gravity( self, gravity = .35 ):
         #GRAVITY
@@ -128,7 +128,7 @@ class Block( pygame.sprite.Sprite ):
 
         self.rect = self.image.get_rect()
         #Comment in if you want to use origin functionality
-        
+
         #self.origin_x = self.rect.centerx
         #self.origin_y = self.rect.centery
 
@@ -159,7 +159,7 @@ class Level( object ):
         #adjust how much you want screen to move
         self.up_viewbox = window_height/5
         self.down_viewbox = window_height/4 + window_height/12
-                                            
+
 
     def update( self ):
 
@@ -211,7 +211,7 @@ class Level_01( Level ):
         #Player start
         self.player_start = self.player_start_x, self.player_start_y = (100,0)
 
-        x = 1154                                    
+        x = 1154
 
         level = [
                 #[ x, y, width, height, color ]
@@ -232,7 +232,7 @@ class Level_01( Level ):
                 [1088 + x, 117, 106, 17, black],
                 [1028 + x, 339, 71, 19, black],
             ]
-        
+
         for block in level:
             block = Block( block[0], block[1], block[2], block [3], block [4])
             self.object_list.add( block )
@@ -244,7 +244,7 @@ if(__name__ == "__main__" ):
     window = pygame.display.set_mode( window_size, pygame.RESIZABLE )
 
     pygame.display.set_caption("Kyle's Game")
-    
+
     #FPS using clock function
     clock = pygame.time.Clock()
     frames_per_second = 100
@@ -263,29 +263,27 @@ if(__name__ == "__main__" ):
     current_level = level_list [ current_level_number ]
 
     player.set_level( current_level )
-    
+
 
     message = previous_message = None
-    
+
     running = True
     #keeps game window running
-    
+
     while ( running ):
         for event in pygame.event.get():
             if (event.type == pygame.QUIT) or ( event.type == pygame.KEYDOWN ) and ( event.key == pygame.K_ESCAPE or event.key == pygame.K_q ):
                 running = False
 
-        
+
         # Update Functions
         player.update ( current_level.object_list, event )
         event = None
 
         current_level.update()
 
-
         #Logic Testing
         current_level.run_viewbox()
-
 
         #Draw Everything
         current_level.draw( window )

@@ -5,6 +5,13 @@ import random
 #File which contains colors
 from colors import *
 
+
+##GLOBAL VARS
+
+#set width and height
+display_width = 1250
+display_height = 1000
+
 #Start with the classes
 class Player( pygame.sprite.Sprite ):
     #Initializing the sprites
@@ -15,7 +22,7 @@ class Player( pygame.sprite.Sprite ):
         #self.image = pygame.Surface(( width, height))
         #self.image.fill( color )
 
-        self.image = pygame.image.load("racecar.png").convert()
+        self.image = pygame.image.load("btjump.gif").convert()
 
         self.set_properties()
 
@@ -43,8 +50,7 @@ class Player( pygame.sprite.Sprite ):
         self.set_position( level.player_start_x, level.player_start_y)
 
     #Collisions
-    def update( self, collidable = pygame.sprite.Group(), event = None ):
-
+    def update( self, collidable = pygame.sprite.Group(), event=None ):
         self.experience_gravity()
 
         self.rect.x += self.hspeed
@@ -75,7 +81,8 @@ class Player( pygame.sprite.Sprite ):
                 self.rect.top = collided_object.rect.bottom
                 self.vspeed = 0
 
-        if not ( event == None ):
+        #TODO: Fix this loop so that it will automatically update and put player at top without needing another button press *******
+        if not ( event == None):
             if ( event.type == pygame.KEYDOWN ):
                 if ( event.key == pygame.K_LEFT ):
                     self.hspeed = -self.speed
@@ -103,6 +110,9 @@ class Player( pygame.sprite.Sprite ):
                     #comment this out if you want box to jump full height each time
                     pass
 
+            #TODO: make the level wrap around --> works kind of, but you can no clip off screen
+            if(self.rect.y > display_height):
+                self.rect.y = 0
 
     def experience_gravity( self, gravity = .35 ):
         #GRAVITY
@@ -143,7 +153,6 @@ class Block( pygame.sprite.Sprite ):
 class Level( object ):
 
     def __init__(self, player_object ):
-
         self.object_list = pygame.sprite.Group()
 
         self.player_object = player_object
@@ -161,17 +170,13 @@ class Level( object ):
 
 
     def update( self ):
-
         self.object_list.update()
 
     def draw( self, window ):
-
         window.fill( white )
-
         self.object_list.draw( window )
 
     def shift_world( self, shift_x, shift_y ):
-
         self.world_shift_x += shift_x
         self.world_shift_y += shift_y
 
@@ -192,15 +197,15 @@ class Level( object ):
             self.shift_world( view_difference, 0 )
 
         #up viewbox
-        if ( self.player_object.rect.y <= self.up_viewbox ):
-            view_difference = self.up_viewbox - self.player_object.rect.y
-            self.player_object.rect.y = self.up_viewbox
-            self.shift_world( 0, view_difference )
-        #down viewbox
-        if ( self.player_object.rect.y >= self.down_viewbox ):
-            view_difference = self.down_viewbox - self.player_object.rect.y
-            self.player_object.rect.y = self.down_viewbox
-            self.shift_world( 0, view_difference )
+        # if ( self.player_object.rect.y <= self.up_viewbox ):
+        #     view_difference = self.up_viewbox - self.player_object.rect.y
+        #     self.player_object.rect.y = self.up_viewbox
+        #     self.shift_world( 0, view_difference )
+        # #down viewbox
+        # if ( self.player_object.rect.y >= self.down_viewbox ):
+        #     view_difference = self.down_viewbox - self.player_object.rect.y
+        #     self.player_object.rect.y = self.down_viewbox
+        #     self.shift_world( 0, view_difference )
 
 
 class Level_00( Level ):
@@ -209,28 +214,52 @@ class Level_00( Level ):
 
         super( Level_00, self ).__init__( player_object )
         #Player start
-        self.player_start = self.player_start_x, self.player_start_y = (100,0)
+        self.player_start = self.player_start_x, self.player_start_y = (display_width/2,display_height/2)
 
+        #width of the screen at one point --> can use this to do arithmetic and go off level
         x = 1154
 
+        # level = [
+        #         #[ x, y, width, height, color ]
+        #         [0, 12, 75, 682, black],
+        #         [72, 614, 1154, 80, black],
+        #         [70, 542, 223, 23, black],
+        #         [538, 534, 239, 32, black],
+        #         [830, 486, 164, 25, black],
+        #         [1037, 431, 162, 32, black],
+        #
+        #         [1226, 614, 1154, 80, black],
+        #         [339 + x, 496, 233, 33, black],
+        #         [662 + x, 470, 202, 26, black],
+        #         [907 + x, 419, 306, 21, black],
+        #         [1193 + x, 116, 16, 304, black],
+        #         [1112 + x, 248, 81, 26, black],
+        #         [911 + x, 172, 85, 20, black],
+        #         [1088 + x, 117, 106, 17, black],
+        #         [1028 + x, 339, 71, 19, black],
+        #     ]
+
+        #how thick our lines are
+        edge_width = 30
         level = [
                 #[ x, y, width, height, color ]
-                [0, 12, 75, 682, black],
-                [72, 614, 1154, 80, black],
-                [70, 542, 223, 23, black],
-                [538, 534, 239, 32, black],
-                [830, 486, 164, 25, black],
-                [1037, 431, 162, 32, black],
+                #top
+                [0, 0, display_width/8, edge_width, black],
+                [display_width/4, 0, display_width/2, edge_width, black],
+                [display_width*3/4 - (display_width/8), 0, display_width/8, edge_width, black],
+                [display_width*7/8, 0, display_width/8, edge_width, black],
 
-                [1226, 614, 1154, 80, black],
-                [339 + x, 496, 233, 33, black],
-                [662 + x, 470, 202, 26, black],
-                [907 + x, 419, 306, 21, black],
-                [1193 + x, 116, 16, 304, black],
-                [1112 + x, 248, 81, 26, black],
-                [911 + x, 172, 85, 20, black],
-                [1088 + x, 117, 106, 17, black],
-                [1028 + x, 339, 71, 19, black],
+                #left side
+                [0, 0, edge_width, display_height, black],
+
+                #right side
+                [display_width-edge_width, 0, edge_width, display_height, black],
+
+                #bottom
+                [0, display_height-edge_width, display_width/8, edge_width, black],
+                [display_width/4, display_height-edge_width, display_width/2, edge_width, black],
+                [display_width*3/4 - (display_width/8), display_height-edge_width, display_width/8, edge_width, black],
+                [display_width*7/8, display_height-edge_width, display_width/8, edge_width, black],
             ]
 
         for block in level:
@@ -243,29 +272,9 @@ class Level_00( Level ):
 #needs to be here
 pygame.init()
 
-#define some colors
-# black = (0, 0, 0)
-# white = (255, 255, 255)
-# red = (255, 0, 0)
-# green = (0, 255, 0)
-# blue = (0, 0, 255)
-#
-# bright_red = (255, 0, 0)
-# bright_green = (0, 255, 0)
-
-block_color = (53, 115, 255)
-
-#set width and height
-display_width = 1000
-display_height = 1000
-
 #initialize window
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('Dungeon Game')
-
-#load in the image of our hero
-# character = pygame.image.load('racecar.png')
-# char_width = 73 #width of the image
 
 #initialize clock
 clock = pygame.time.Clock()
@@ -273,16 +282,6 @@ clock = pygame.time.Clock()
 #set the fps
 frames_per_second = 60
 
-
-# def monsters(thingx, thingy, thingw, thingh, color):
-#     pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingw, thingh])
-#
-# def platform(thingx, thingy, thingw, thingh, color):
-#     pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingw, thingh])
-
-# def character_update(x, y):
-#     #put the image on the screen
-#     gameDisplay.blit(character, (x,y))
 
 #get the text objects for a given font
 def text_objects(text, font):
@@ -335,8 +334,8 @@ def game_intro():
         TextRect.center = ((display_width/2), (display_height/2))
         gameDisplay.blit(TextSurf, TextRect)
 
-        button("GO!", 150, 600, 100, 50, green, bright_green, game_loop)
-        button("QUIT", 550, 600, 100, 50, red, bright_red, quit_game)
+        button("GO!", display_width/3, display_height*(0.6), 100, 50, green, bright_green, game_loop)
+        button("QUIT", display_width*2/3 - 100, display_height*(0.6), 100, 50, red, bright_red, quit_game)
 
         pygame.display.update()
         clock.tick(15)
@@ -347,8 +346,8 @@ def game_loop():
     player = Player()
 
     #character starting position
-    x = 500
-    y = 500
+    x = display_width/2
+    y = display_height/2
     player.set_position(x, y)
     active_object_list.add( player )
 
@@ -362,29 +361,16 @@ def game_loop():
 
     player.set_level( current_level )
 
-    #variables for controllign the sprite
-    # x_change = 0
-    # y_change = 0
-    #
-    # #putting an object on screen
-    # thing_startx = random.randrange(0, display_width)
-    # thing_starty = -600
-    # thing_speed = 4
-    # thing_width = 100
-    # thing_height = 100
-    #
-    # #count for the number of things dodged
-    # dodged = 0
-
     #keeps the game window running
     gameExit = True
+    event = None
 
-    #event loop
-    while gameExit:
+    while(gameExit):
         for event in pygame.event.get():
             if (event.type == pygame.QUIT) or ( event.type == pygame.KEYDOWN ) and ( event.key == pygame.K_ESCAPE or event.key == pygame.K_q ):
                 gameExit = False
-
+                pygame.quit()
+                quit()
 
         # Update Functions
         player.update ( current_level.object_list, event )
@@ -392,15 +378,12 @@ def game_loop():
 
         current_level.update()
 
-
         #Logic Testing
-        current_level.run_viewbox()
-
+        #current_level.run_viewbox()
 
         #Draw Everything
         current_level.draw( gameDisplay )
         active_object_list.draw( gameDisplay )
-
 
         #Delay Framerate
         clock.tick( frames_per_second )
