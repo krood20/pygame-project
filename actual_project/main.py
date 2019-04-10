@@ -250,10 +250,12 @@ class Level_00( Level ):
                 [display_width*7/8, 0, display_width/8, edge_width, black],
 
                 #left side
-                [0, 0, edge_width, display_height, black],
+                [0, 0, edge_width, display_height/3, black],
+                [0, display_height*2/3, edge_width, display_height/3, black],
 
                 #right side
-                [display_width-edge_width, 0, edge_width, display_height, black],
+                [display_width-edge_width, 0, edge_width, display_height/3, black],
+                [display_width-edge_width, display_height*2/3, edge_width, display_height/3, black],
 
                 #bottom
                 [0, display_height-edge_width, display_width/8, edge_width, black],
@@ -380,8 +382,16 @@ def game_loop():
 
         #make the level wrap around
         position = player.get_position()
+        #vertical
         if(position[1] > display_height):
             player.set_position(position[0], 0)
+        elif(position[1] < 0):
+            player.set_position(position[0], display_height)
+        #horizontal
+        if(position[0] > display_width):
+            player.set_position(0, position[1])
+        elif(position[0] < 0):
+            player.set_position(display_width, position[1])
 
         # Update Functions
         player.update ( current_level.object_list, event )
