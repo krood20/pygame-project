@@ -31,6 +31,10 @@ class Player( pygame.sprite.Sprite ):
 
         self.level = None
 
+    def get_position(self):
+        return (self.rect.centerx, self.rect.centery)
+
+
     #setting properties; origin
     def set_properties( self ):
         self.rect = self.image.get_rect()
@@ -89,7 +93,7 @@ class Player( pygame.sprite.Sprite ):
 
                 if ( event.key == pygame.K_RIGHT ):
                     self.hspeed = self.speed
-                #makes sure block only jumps once
+                #makes sure block only jumps once TODO: Double jumping
                 if ( event.key == pygame.K_UP ):
                     if ( len(collision_list) == 1 ):
                         self.vspeed = -( self.speed )*2
@@ -109,10 +113,6 @@ class Player( pygame.sprite.Sprite ):
                     #if ( self.vspeed != 0 ): self.vspeed = 0
                     #comment this out if you want box to jump full height each time
                     pass
-
-            #TODO: make the level wrap around --> works kind of, but you can no clip off screen
-            if(self.rect.y > display_height):
-                self.rect.y = 0
 
     def experience_gravity( self, gravity = .35 ):
         #GRAVITY
@@ -260,6 +260,11 @@ class Level_00( Level ):
                 [display_width/4, display_height-edge_width, display_width/2, edge_width, black],
                 [display_width*3/4 - (display_width/8), display_height-edge_width, display_width/8, edge_width, black],
                 [display_width*7/8, display_height-edge_width, display_width/8, edge_width, black],
+
+                #middle platforms
+                [display_width/8, display_height/2, display_width/8, edge_width, black],
+                [display_width*3/4, display_height/2, display_width/8, edge_width, black],
+                [display_width*3.5/8, display_height/2, display_width/8, edge_width, black],
             ]
 
         for block in level:
@@ -371,6 +376,12 @@ def game_loop():
                 gameExit = False
                 pygame.quit()
                 quit()
+
+
+        #make the level wrap around
+        position = player.get_position()
+        if(position[1] > display_height):
+            player.set_position(position[0], 0)
 
         # Update Functions
         player.update ( current_level.object_list, event )
