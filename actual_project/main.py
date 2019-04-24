@@ -2,7 +2,7 @@ import pygame
 import time
 import random
 
-#TODO: Figure out how to use sprite sheets to animate character, make new character
+#TODO:
 
 #File which contains colors
 from colors import *
@@ -27,22 +27,22 @@ clock = pygame.time.Clock()
 #set the fps
 frames_per_second = 60
 
-# class Spritesheet:
-#     #utility class for loading and parsing spritesheets
-#     def __init__(self, filename):
-#         self.spritesheet = pygame.image.load(filename).convert()
-#
-#     def get_image(self, x, y, width, height):
-#         #get an image out of a larger spritesheet
-#         image = pygame.Surface((width, height))
-#         image.blit(self.spritesheet, (0,0), (x, y, width, height))
-#         #resize the image
-#         image = pygame.transform.scale(image, (width//2, height//2))
-#         return image
+class Spritesheet:
+    #utility class for loading and parsing spritesheets
+    def __init__(self, filename):
+        self.spritesheet = pygame.image.load(filename).convert()
+
+    def get_image(self, x, y, width, height):
+        #get an image out of a larger spritesheet
+        image = pygame.Surface((width, height))
+        image.blit(self.spritesheet, (0,0), (x, y, width, height))
+        #resize the image
+        image = pygame.transform.scale(image, (width//2, height//2))
+        return image
 
 
 #TODO: clean this up, put classes in a different file
-# spritesheet = Spritesheet("spritesheet_jumper.png")
+spritesheet = Spritesheet("spritesheet_jumper.png")
 
 #Start with the classes
 class Player( pygame.sprite.Sprite ):
@@ -55,14 +55,14 @@ class Player( pygame.sprite.Sprite ):
         #self.image.fill( color )
 
         #sprite animations
-        # self.walking = False
-        # self.jumping = False
-        # self.current_frame = 0
-        # self.last_update = 0
-        # self.load_images()
-        # self.image = self.standing_frames[0]
+        self.walking = False
+        self.jumping = False
+        self.current_frame = 0
+        self.last_update = 0
+        self.load_images()
+        self.image = self.standing_frames[0]
 
-        self.image = pygame.image.load("btjump.gif").convert()
+        #self.image = pygame.image.load("btjump.gif").convert()
 
         self.set_properties()
 
@@ -74,23 +74,29 @@ class Player( pygame.sprite.Sprite ):
 
     #this is used for getting the sprite images
     #TODO: Do the same for background
-    # def load_images(self):
-    #     self.standing_frames = [spritesheet.get_image(614, 1063, 120, 191),
-    #                             spritesheet.get_image(690, 406, 120, 201),
-    #                             ]
-    #     for frame in self.standing_frames:
-    #         frame.set_colorkey(black)
-    #
-    #     self.walking_frames_r = [spritesheet.get_image(678, 860, 120, 201),
-    #                              spritesheet.get_image(692, 1458, 120, 207),
-    #                             ]
-    #
-    #     self.walking_frames_l = []
-    #     for frame in self.walking_frames_r:
-    #             frame.set_colorkey(black)
-    #             self.walking_frames_l.append(pygame.transform.flip(frame, True, False))
-    #     self.jump_frame = spritesheet.get_image(382, 763, 150, 181)
-    #     self.jump_frame.set_colorkey(black)
+    def load_images(self):
+        self.standing_frames = [spritesheet.get_image(614, 1063, 120, 191),
+                                spritesheet.get_image(690, 406, 120, 201),
+                                ]
+
+        #take out background black color
+        for frame in self.standing_frames:
+            frame.set_colorkey(black)
+
+        self.walking_frames_r = [spritesheet.get_image(678, 860, 120, 201),
+                                 spritesheet.get_image(692, 1458, 120, 207),
+                                ]
+
+        self.walking_frames_l = []
+
+        #walking frame l is just r but flipped
+        for frame in self.walking_frames_r:
+                frame.set_colorkey(black)
+                self.walking_frames_l.append(pygame.transform.flip(frame, True, False))
+
+        #add in the jump frame
+        self.jump_frame = spritesheet.get_image(382, 763, 150, 181)
+        self.jump_frame.set_colorkey(black)
 
     def get_position(self):
         return (self.rect.centerx, self.rect.centery)
@@ -116,7 +122,9 @@ class Player( pygame.sprite.Sprite ):
 
     #Collisions
     def update( self, collidable = pygame.sprite.Group(), event=None ):
-        #self.animate()
+        #run sprite animations
+        self.animate()
+
         self.experience_gravity()
 
         self.rect.x += self.hspeed
@@ -181,39 +189,46 @@ class Player( pygame.sprite.Sprite ):
         if ( self.vspeed == 0 ): self.vspeed = 1
         else: self.vspeed += gravity
 
-    # #figure out better name for this later
-    # def animate(self):
-    #     now = pygame.time.get_ticks()
-    #
-    #     if self.hspeed != 0:
-    #         self.walking = True
-    #     else:
-    #         self.walking = False
-    #
-    #     #show walk animations
-    #     if self.walking:
-    #         if now - self.last_update > 200:
-    #             self.last_update = now
-    #             self.current_frame = (self.current_frame + 1) % len(self.standing_frames)
-    #             #bottom = self.rect.bottom
-    #             if self.hspeed>0:
-    #                 self.image = self.walking_frames_r[self.current_frame]
-    #             else:
-    #                 self.image = self.walking_frames_l[self.current_frame]
-    #
-    #             self.rect = self.image.get_rect()
-    #             #self.rect.bottom = bottom
-    #
-    #     #show idle animation
-    #     if not self.jumping and not self.walking:
-    #         if now - self.last_update > 350:
-    #             self.last_update = now
-    #             self.current_frame = (self.current_frame + 1) % len(self.standing_frames)
-    #             #make the bunny standing on the floor
-    #             # bottom = self.rect.bottom
-    #             # self.image = self.standing_frames[self.current_frame]
-    #             # self.rect = self.image.get_rect()
-    #             # self.rect.bottom = bottom
+    #figure out better name for this later
+    def animate(self):
+        #get the current time --> # of ticks since game started
+        now = pygame.time.get_ticks()
+
+        #set walking variable to true if we are moving horizontally
+        if self.hspeed != 0:
+            self.walking = True
+        else:
+            self.walking = False
+
+        #show walk animations
+        #TODO: Figure out why the sideways walking animation isnt working
+        # if self.walking:
+        #     if now - self.last_update > 200:
+        #         self.last_update = now
+        #         self.current_frame = #(self.current_frame + 1) % len(self.walking_frames_l)
+        #         #bottom = self.rect.bottom
+        #
+        #         #if our hspeed is positive, we are moving to the right, otherwise left
+        #         if self.hspeed>0:
+        #             self.image = self.walking_frames_r[self.current_frame]
+        #         else:
+        #             self.image = self.walking_frames_l[self.current_frame]
+        #
+        #         self.rect = self.image.get_rect()
+        #         #self.rect.bottom = bottom
+
+        #show idle animation
+        if not self.jumping and not self.walking:
+            if now - self.last_update > 350:
+                self.last_update = now
+                self.current_frame = (self.current_frame + 1) % len(self.standing_frames)
+                self.image = self.standing_frames[self.current_frame]
+
+                #make the bunny standing on the floor
+                # bottom = self.rect.bottom
+                # self.image = self.standing_frames[self.current_frame]
+                # self.rect = self.image.get_rect()
+                # self.rect.bottom = bottom
 
 
 class Block( pygame.sprite.Sprite ):
@@ -343,7 +358,6 @@ class Level_00( Level ):
                 #top
                 [0, 0, display_width/8, edge_width, black],
                 [display_width/4, 0, display_width/2, edge_width, black],
-                [display_width*3/4 - (display_width/8), 0, display_width/8, edge_width, black],
                 [display_width*7/8, 0, display_width/8, edge_width, black],
 
                 #left side
@@ -357,7 +371,6 @@ class Level_00( Level ):
                 #bottom
                 [0, display_height-edge_width, display_width/8, edge_width, black],
                 [display_width/4, display_height-edge_width, display_width/2, edge_width, black],
-                [display_width*3/4 - (display_width/8), display_height-edge_width, display_width/8, edge_width, black],
                 [display_width*7/8, display_height-edge_width, display_width/8, edge_width, black],
 
                 #middle platforms
