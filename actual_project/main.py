@@ -42,7 +42,8 @@ class Spritesheet:
 
 
 #TODO: clean this up, put classes in a different file
-spritesheet = Spritesheet("spritesheet_jumper.png")
+char_spritesheet = Spritesheet("spritesheet_jumper.png")
+platform_spritesheet = Spritesheet("./../abstract_platformer/Spritesheet/spritesheet_tiles.png")
 
 #Start with the classes
 class Player( pygame.sprite.Sprite ):
@@ -75,16 +76,16 @@ class Player( pygame.sprite.Sprite ):
     #this is used for getting the sprite images
     #TODO: Do the same for background
     def load_images(self):
-        self.standing_frames = [spritesheet.get_image(614, 1063, 120, 191),
-                                spritesheet.get_image(690, 406, 120, 201),
+        self.standing_frames = [char_spritesheet.get_image(614, 1063, 120, 191),
+                                char_spritesheet.get_image(690, 406, 120, 201),
                                 ]
 
         #take out background black color
         for frame in self.standing_frames:
             frame.set_colorkey(black)
 
-        self.walking_frames_r = [spritesheet.get_image(678, 860, 120, 201),
-                                 spritesheet.get_image(692, 1458, 120, 207),
+        self.walking_frames_r = [char_spritesheet.get_image(678, 860, 120, 201),
+                                 char_spritesheet.get_image(692, 1458, 120, 207),
                                 ]
 
         self.walking_frames_l = []
@@ -95,7 +96,7 @@ class Player( pygame.sprite.Sprite ):
                 self.walking_frames_l.append(pygame.transform.flip(frame, True, False))
 
         #add in the jump frame
-        self.jump_frame = spritesheet.get_image(382, 763, 150, 181)
+        self.jump_frame = char_spritesheet.get_image(382, 763, 150, 181)
         self.jump_frame.set_colorkey(black)
 
     def get_position(self):
@@ -232,20 +233,33 @@ class Player( pygame.sprite.Sprite ):
 
 
 class Block( pygame.sprite.Sprite ):
-#Initializing the sprites
-    def __init__( self, x, y, width, height, color = blue):
+#Initializing the sprites TODO: Change the color attribute to the type of block
+    def __init__( self, x, y, platform_number):
+        #for platform number, 0 is top platform, 1 is middle, 2 is bottom --> TODO: add in more types later
 
         super( Block, self ).__init__()
 
-        if( width < 0):
-            x += width
-            width = abs( width )
-        if (height < 0):
-            y += height
-            height = abs( height )
+        # if( width < 0):
+        #     x += width
+        #     width = abs( width )
+        # if (height < 0):
+        #     y += height
+        #     height = abs( height )
 
-        self.image = pygame.Surface(( width, height))
-        self.image.fill( color )
+
+        #just black blocks
+        # self.image = pygame.Surface(( width, height))
+        # self.image.fill( color )
+
+        #using spritesheet images --> load in all of the blocks
+        #TODO: Paser xml file to grab specific sprites
+        images = [  platform_spritesheet.get_image(390, 650, 64, 64), #top/side platform --> bluetile_
+                    platform_spritesheet.get_image(325, 130, 64, 50), #middle platform --> bluetile_05
+                    platform_spritesheet.get_image(390, 520, 64, 64)  #bottom platform
+                ]
+        self.image = images[platform_number] #can use this to pick different platforms
+        self.image.set_colorkey(black)
+        #TODO:scale the images so they will be slightly larger
 
         self.rect = self.image.get_rect()
         #Comment in if you want to use origin functionality
@@ -279,7 +293,6 @@ class Level( object ):
         #adjust how much you want screen to move
         self.up_viewbox = display_height/5
         self.down_viewbox = display_height/4 + display_height/12
-
 
     def update( self ):
         self.object_list.update()
@@ -354,33 +367,33 @@ class Level_00( Level ):
         #how thick our lines are
         edge_width = 30
         level = [
-                #[ x, y, width, height, color ]
+                #[ x, y, platform_number ] --> commented out parts are width and height
                 #top
-                [0, 0, display_width/8, edge_width, black],
-                [display_width/4, 0, display_width/2, edge_width, black],
-                [display_width*7/8, 0, display_width/8, edge_width, black],
+                [0, 0, 0], #display_width/8, edge_width, 0],
+                [display_width/4, 0, 0], # display_width/2, edge_width, 0],
+                [display_width*7/8, 0, 0], # display_width/8, edge_width, 0],
 
                 #left side
-                [0, 0, edge_width, display_height/3, black],
-                [0, display_height*2/3, edge_width, display_height/3, black],
+                [0, 0, 0], #edge_width, display_height/3, 0],
+                [0, display_height*2/3, 0], # edge_width, display_height/3, 0],
 
                 #right side
-                [display_width-edge_width, 0, edge_width, display_height/3, black],
-                [display_width-edge_width, display_height*2/3, edge_width, display_height/3, black],
+                [display_width-edge_width, 0, 0], # edge_width, display_height/3, 0],
+                [display_width-edge_width, display_height*2/3, 0], # edge_width, display_height/3, 0],
 
                 #bottom
-                [0, display_height-edge_width, display_width/8, edge_width, black],
-                [display_width/4, display_height-edge_width, display_width/2, edge_width, black],
-                [display_width*7/8, display_height-edge_width, display_width/8, edge_width, black],
+                [0, display_height-edge_width, 2], # display_width/8, edge_width, 2],
+                [display_width/4, display_height-edge_width, 2], # display_width/2, edge_width, 2],
+                [display_width*7/8, display_height-edge_width, 2], # display_width/8, edge_width, 2],
 
                 #middle platforms
-                [display_width/8, display_height/2, display_width/8, edge_width, black],
-                [display_width*3/4, display_height/2, display_width/8, edge_width, black],
-                [display_width*3.5/8, display_height/2, display_width/8, edge_width, black],
+                [display_width/8, display_height/2, 1], # display_width/8, edge_width, 1],
+                [display_width*3/4, display_height/2, 1], # display_width/8, edge_width, 1],
+                [display_width*3.5/8, display_height/2, 1]# display_width/8, edge_width, 1],
             ]
 
         for block in level:
-            block = Block( block[0], block[1], block[2], block [3], block [4])
+            block = Block( block[0], block[1], block[2])#, block [3], block [4])
             self.object_list.add( block )
 
 
@@ -481,7 +494,8 @@ def game_loop():
             player.set_position(position[0], 0)
         elif(position[1] < 0):
             player.set_position(position[0], display_height)
-        #horizontal
+        #horizontal --> the player.rect.width/2 modifications cause player to be totally off screen
+        #TODO: figure out how to make player appear on both sides
         if(position[0] > display_width  + player.rect.width/2):
             player.set_position(0 - player.rect.width/2, position[1])
         elif(position[0] < 0 - player.rect.width/2):
