@@ -202,20 +202,20 @@ class Player( pygame.sprite.Sprite ):
 
         #show walk animations
         #TODO: Figure out why the sideways walking animation isnt working
-        # if self.walking:
-        #     if now - self.last_update > 200:
-        #         self.last_update = now
-        #         self.current_frame = #(self.current_frame + 1) % len(self.walking_frames_l)
-        #         #bottom = self.rect.bottom
-        #
-        #         #if our hspeed is positive, we are moving to the right, otherwise left
-        #         if self.hspeed>0:
-        #             self.image = self.walking_frames_r[self.current_frame]
-        #         else:
-        #             self.image = self.walking_frames_l[self.current_frame]
-        #
-        #         self.rect = self.image.get_rect()
-        #         #self.rect.bottom = bottom
+        if self.walking:
+            #check if it is time to update
+            if now - self.last_update > 200: #number is the # milliseconds between updating frmaes --> more frames of animation, lower number
+                self.last_update = now
+                self.current_frame = (self.current_frame + 1) % len(self.walking_frames_l)
+                #bottom = self.rect.bottom
+
+                #if our hspeed is positive, we are moving to the right, otherwise left
+                if self.hspeed>0:
+                    self.image = self.walking_frames_r[self.current_frame]
+                else:
+                    self.image = self.walking_frames_l[self.current_frame]
+
+                #self.rect.bottom = bottom
 
         #show idle animation
         if not self.jumping and not self.walking:
@@ -482,10 +482,10 @@ def game_loop():
         elif(position[1] < 0):
             player.set_position(position[0], display_height)
         #horizontal
-        if(position[0] > display_width):
-            player.set_position(0, position[1])
-        elif(position[0] < 0):
-            player.set_position(display_width, position[1])
+        if(position[0] > display_width  + player.rect.width/2):
+            player.set_position(0 - player.rect.width/2, position[1])
+        elif(position[0] < 0 - player.rect.width/2):
+            player.set_position(display_width + player.rect.width/2, position[1])
 
         # Update Functions
         player.update ( current_level.object_list, event )
