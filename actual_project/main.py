@@ -14,8 +14,8 @@ from colors import *
 pygame.init()
 
 #set width and height
-display_width = 1250
-display_height = 1000
+display_width = 1280
+display_height = 800
 
 #initialize window
 gameDisplay = pygame.display.set_mode((display_width,display_height))
@@ -166,7 +166,7 @@ class Player( pygame.sprite.Sprite ):
                     self.hspeed = self.speed
                 #makes sure block only jumps once TODO: Double jumping
                 if ( event.key == pygame.K_UP ):
-                    if ( len(collision_list) == 1 ):
+                    if ( len(collision_list) != 0):
                         self.vspeed = -( self.speed )*2
 
             if ( event.type == pygame.KEYUP ):
@@ -259,7 +259,9 @@ class Block( pygame.sprite.Sprite ):
                 ]
         self.image = images[platform_number] #can use this to pick different platforms
         self.image.set_colorkey(black)
-        #TODO:scale the images so they will be slightly larger
+
+        #scale the images so they will be slightly larger
+        self.image = pygame.transform.scale(self.image, (40,40))
 
         self.rect = self.image.get_rect()
         #Comment in if you want to use origin functionality
@@ -364,33 +366,165 @@ class Level_00( Level ):
         #         [1028 + x, 339, 71, 19, black],
         #     ]
 
-        #how thick our lines are
-        edge_width = 30
+        #how thick our boxes are
+        edge_width = 40
+        box_width = 40
+
         level = [
                 #[ x, y, platform_number ] --> commented out parts are width and height
                 #top
-                [0, 0, 0], #display_width/8, edge_width, 0],
-                [display_width/4, 0, 0], # display_width/2, edge_width, 0],
-                [display_width*7/8, 0, 0], # display_width/8, edge_width, 0],
-
-                #left side
-                [0, 0, 0], #edge_width, display_height/3, 0],
-                [0, display_height*2/3, 0], # edge_width, display_height/3, 0],
-
-                #right side
-                [display_width-edge_width, 0, 0], # edge_width, display_height/3, 0],
-                [display_width-edge_width, display_height*2/3, 0], # edge_width, display_height/3, 0],
+                [0, 0, 0],
+                [box_width, 0, 0],
+                [2 * box_width, 0, 0],
+                [3 * box_width, 0, 0],
+                #[4 * box_width, 0, 0],
+                #[5 * box_width, 0, 0],
+                # [6 * box_width, 0, 0],
+                # [7 * box_width, 0, 0],
+                # [8 * box_width, 0, 0],
+                [9 * box_width, 0, 0],
+                [10 * box_width, 0, 0],
+                [11 * box_width, 0, 0],
+                [12 * box_width, 0, 0],
+                [13 * box_width, 0, 0],
+                [14 * box_width, 0, 0],
+                [15 * box_width, 0, 0],
+                [16 * box_width, 0, 0],
+                [17 * box_width, 0, 0],
+                [18 * box_width, 0, 0],
+                [19 * box_width, 0, 0],
+                [20 * box_width, 0, 0],
+                [21 * box_width, 0, 0],
+                [22 * box_width, 0, 0],
+                # [23 * box_width, 0, 0],
+                # [24 * box_width, 0, 0],
+                # [25 * box_width, 0, 0],
+                # [26 * box_width, 0, 0],
+                # [27 * box_width, 0, 0],
+                [28 * box_width, 0, 0],
+                [29 * box_width, 0, 0],
+                [30 * box_width, 0, 0],
+                [31 * box_width, 0, 0],
 
                 #bottom
-                [0, display_height-edge_width, 2], # display_width/8, edge_width, 2],
-                [display_width/4, display_height-edge_width, 2], # display_width/2, edge_width, 2],
-                [display_width*7/8, display_height-edge_width, 2], # display_width/8, edge_width, 2],
+                [0, display_height - box_width, 2],
+                [box_width, display_height - box_width, 2],
+                [2 * box_width, display_height - box_width, 2],
+                [3 * box_width, display_height - box_width, 2],
+                #[4 * box_width, display_height - box_width, 2],
+                #[5 * box_width, display_height - box_width, 2],
+                # [6 * box_width, display_height - box_width, 2],
+                # [7 * box_width, display_height - box_width, 2],
+                # [8 * box_width, display_height - box_width, 2],
+                [9 * box_width, display_height - box_width, 2],
+                [10 * box_width, display_height - box_width, 2],
+                [11 * box_width, display_height - box_width, 2],
+                [12 * box_width, display_height - box_width, 2],
+                [13 * box_width, display_height - box_width, 2],
+                [14 * box_width, display_height - box_width, 2],
+                [15 * box_width, display_height - box_width, 2],
+                [16 * box_width, display_height - box_width, 2],
+                [17 * box_width, display_height - box_width, 2],
+                [18 * box_width, display_height - box_width, 2],
+                [19 * box_width, display_height - box_width, 2],
+                [20 * box_width, display_height - box_width, 2],
+                [21 * box_width, display_height - box_width, 2],
+                [22 * box_width, display_height - box_width, 2],
+                # [23 * box_width, display_height - box_width, 2],
+                # [24 * box_width, display_height - box_width, 2],
+                # [25 * box_width, display_height - box_width, 2],
+                # [26 * box_width, display_height - box_width, 2],
+                # [27 * box_width, display_height - box_width, 2],
+                [28 * box_width, display_height - box_width, 2],
+                [29 * box_width, display_height - box_width, 2],
+                [30 * box_width, display_height - box_width, 2],
+                [31 * box_width, display_height - box_width, 2],
+
+                #left side
+                [0, box_width, 0],
+                [0, 2 * box_width, 0],
+                [0, 3 * box_width, 0],
+                [0, 4 * box_width, 0],
+                [0, 5 * box_width, 0],
+                # [0, 6 * box_width, 0],
+                # [0, 7 * box_width, 0],
+                # [0, 8 * box_width, 0],
+                # [0, 9 * box_width, 0],
+                # [0, 10 * box_width, 0],
+                # [0, 11 * box_width, 0],
+                # [0, 12 * box_width, 0],
+                [0, 13 * box_width, 0],
+                [0, 14 * box_width, 0],
+                [0, 15 * box_width, 0],
+                [0, 16 * box_width, 0],
+                [0, 17 * box_width, 0],
+                [0, 18 * box_width, 0],
+
+                #right side
+                [display_width - box_width, box_width, 0],
+                [display_width - box_width, 2 * box_width, 0],
+                [display_width - box_width, 3 * box_width, 0],
+                [display_width - box_width, 4 * box_width, 0],
+                [display_width - box_width, 5 * box_width, 0],
+                # [display_width - box_width, 6 * box_width, 0],
+                # [display_width - box_width, 7 * box_width, 0],
+                # [display_width - box_width, 8 * box_width, 0],
+                # [display_width - box_width, 9 * box_width, 0],
+                # [display_width - box_width, 10 * box_width, 0],
+                # [display_width - box_width, 11 * box_width, 0],
+                # [display_width - box_width, 12 * box_width, 0],
+                [display_width - box_width, 13 * box_width, 0],
+                [display_width - box_width, 14 * box_width, 0],
+                [display_width - box_width, 15 * box_width, 0],
+                [display_width - box_width, 16 * box_width, 0],
+                [display_width - box_width, 17 * box_width, 0],
+                [display_width - box_width, 18 * box_width, 0],
 
                 #middle platforms
-                [display_width/8, display_height/2, 1], # display_width/8, edge_width, 1],
-                [display_width*3/4, display_height/2, 1], # display_width/8, edge_width, 1],
-                [display_width*3.5/8, display_height/2, 1]# display_width/8, edge_width, 1],
-            ]
+                [display_width/8, display_height/2, 1],
+                [display_width/8 + box_width, display_height/2, 1],
+                [display_width/8 + box_width * 2, display_height/2, 1],
+                [display_width/8 + box_width * 3, display_height/2, 1],
+
+                [display_width*3/4, display_height/2, 1],
+                [display_width*3/4 + box_width, display_height/2, 1],
+                [display_width*3/4 - box_width, display_height/2, 1],
+                [display_width*3/4 + 2 * box_width, display_height/2, 1],
+                [display_width*3/4 + 3 * box_width, display_height/2, 1],
+
+
+                [display_width*3.5/8, display_height/2, 1],
+                [display_width*3.5/8 + box_width, display_height/2, 1],
+                [display_width*3.5/8 + 2 * box_width, display_height/2, 1]
+
+        ]
+
+        #populate the level with coordinates
+        # level = [
+        #         #[ x, y, platform_number ] --> commented out parts are width and height
+        #         #top
+        #         [0, 0, 0], #display_width/8, edge_width, 0],
+        #         [display_width/4, 0, 0], # display_width/2, edge_width, 0],
+        #         [display_width*7/8, 0, 0], # display_width/8, edge_width, 0],
+        #
+        #         #left side
+        #         [0, 0, 0], #edge_width, display_height/3, 0],
+        #         [0, display_height*2/3, 0], # edge_width, display_height/3, 0],
+        #
+        #         #right side
+        #         [display_width-edge_width, 0, 0], # edge_width, display_height/3, 0],
+        #         [display_width-edge_width, display_height*2/3, 0], # edge_width, display_height/3, 0],
+        #
+        #         #bottom
+        #         [0, display_height-edge_width, 2], # display_width/8, edge_width, 2],
+        #         [display_width/4, display_height-edge_width, 2], # display_width/2, edge_width, 2],
+        #         [display_width*7/8, display_height-edge_width, 2], # display_width/8, edge_width, 2],
+        #
+        #         #middle platforms
+        #         [display_width/8, display_height/2, 1], # display_width/8, edge_width, 1],
+        #         [display_width*3/4, display_height/2, 1], # display_width/8, edge_width, 1],
+        #         [display_width*3.5/8, display_height/2, 1]# display_width/8, edge_width, 1],
+        #     ]
 
         for block in level:
             block = Block( block[0], block[1], block[2])#, block [3], block [4])
