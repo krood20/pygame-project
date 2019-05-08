@@ -48,7 +48,7 @@ platform_spritesheet = Spritesheet("./../abstract_platformer/Spritesheet/sprites
 #Start with the classes
 class Player( pygame.sprite.Sprite ):
     #Initializing the sprites
-    def __init__( self, color=blue, width = 32, height = 48 ):
+    def __init__( self, width = 32, height = 48 ):
 
         super( Player, self ).__init__()
 
@@ -230,6 +230,99 @@ class Player( pygame.sprite.Sprite ):
                 # self.image = self.standing_frames[self.current_frame]
                 # self.rect = self.image.get_rect()
                 # self.rect.bottom = bottom
+
+class Enemy(Player):
+    #TODO: Make copy player class and modify it
+        #-will be similar, but enemies need other props
+            #-possibly make overarching class? Maybe not
+        #-make automated moving
+        #-change how I am doing the bliting to screen
+        #-
+
+
+    #Initializing the sprites
+    def __init__( self, width = 32, height = 48 ):
+
+        super( Player, self ).__init__()
+
+        #self.image = pygame.Surface(( width, height))
+        #self.image.fill( color )
+
+        #sprite animations
+        self.walking = False
+        self.jumping = False
+        self.current_frame = 0
+        self.last_update = 0
+        self.load_images()
+        self.image = self.walkRight[0]
+
+        #self.image = pygame.image.load("btjump.gif").convert()
+
+        self.set_properties()
+
+        self.hspeed = 0
+        self.vspeed = 0
+
+        self.level = None
+
+    #might need to go back to parent method if I go back to spritesheet
+    def load_images(self):
+        self.walkRight = [pygame.image.load('./enemy_images/R1E.png'),
+                    pygame.image.load('./enemy_images/R2E.png'),
+                    pygame.image.load('./enemy_images/R3E.png'),
+                    pygame.image.load('./enemy_images/R4E.png'),
+                    pygame.image.load('./enemy_images/R5E.png'),
+                    pygame.image.load('./enemy_images/R6E.png'),
+                    pygame.image.load('./enemy_images/R7E.png'),
+                    pygame.image.load('./enemy_images/R8E.png'),
+                    pygame.image.load('./enemy_images/R9E.png'),
+                    pygame.image.load('./enemy_images/R10E.png'),
+                    pygame.image.load('./enemy_images/R11E.png')
+                    ]
+        self.walkLeft = [pygame.image.load('./enemy_images/L1E.png'),
+                    pygame.image.load('./enemy_images/L2E.png'),
+                    pygame.image.load('./enemy_images/L3E.png'),
+                    pygame.image.load('./enemy_images/L4E.png'),
+                    pygame.image.load('./enemy_images/L5E.png'),
+                    pygame.image.load('./enemy_images/L6E.png'),
+                    pygame.image.load('./enemy_images/L7E.png'),
+                    pygame.image.load('./enemy_images/L8E.png'),
+                    pygame.image.load('./enemy_images/L9E.png'),
+                    pygame.image.load('./enemy_images/L10E.png'),
+                    pygame.image.load('./enemy_images/L11E.png')
+                    ]
+
+
+
+
+    #like our update functions
+    def draw(self,win):
+        self.move()
+
+        if self.walkCount + 1 <= 33:
+            self.walkCount = 0
+
+        if self.vel > 0:
+            win.blit(self.walkRight[self.walkCount//3], (self.x, self.y))
+            self.walkCount += 1
+        else:
+            win.blit(self.walkLeft[self.walkCount//3], (self.x, self.y))
+            self.walkCount += 1
+
+    def move(self):
+        if self.vel > 0:
+            if self.x  + self.vel < self.path[1]:
+                self.x += self.vel
+            else:
+                self.vel = self.vel * -1 #turn our enemy around
+                self.walkCount = 0
+
+        else:
+            if self.x - self.vel > self.path[0]:
+                self.x += self.vel
+            else:
+                self.vel = self.vel * -1
+                self.walkCount = 0
 
 
 class Block( pygame.sprite.Sprite ):
@@ -551,7 +644,6 @@ def button(msg, x, y, w, h, ic, ac, action=None):
         # pygame.draw.rect(gameDisplay, bright_red, (550, 450, 100, 50))
         if click[0] == 1 and action != None:
             action()
-
     else:
         pygame.draw.rect(gameDisplay, ic, (x, y, w, h))
 
@@ -592,6 +684,10 @@ def game_loop():
     #initialize the player
     active_object_list = pygame.sprite.Group()
     player = Player()
+
+    #TODO: Generate enemies in a different place --> probably inside game loop
+    enemy = Enemy()
+    active_object_list.add( enemy )
 
     #character starting position
     x = display_width/2
